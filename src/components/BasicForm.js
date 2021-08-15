@@ -1,5 +1,8 @@
 import useInput from "../hooks/use-input";
 
+const isNotEmpty = value => value.trim() !== '';
+const isEmail = value => value.includes('@');
+
 function BasicForm() {
     const {
         value: enteredFirstName,
@@ -8,7 +11,7 @@ function BasicForm() {
         valueChangeHandler: firstNameChangedHandler,
         inputBlurHandler: firstNameBlurHandler,
         reset: resetFirstNameInput
-    } = useInput(value => value.trim() !== '');
+    } = useInput(isNotEmpty);
 
     const {
         value: enteredLastName,
@@ -17,7 +20,7 @@ function BasicForm() {
         valueChangeHandler: lastNameChangedHandler,
         inputBlurHandler: lastNameBlurHandler,
         reset: resetLastNameInput
-    } = useInput(value => value.trim() !== '');
+    } = useInput(isNotEmpty);
 
     const {
         value: enteredEmail,
@@ -26,7 +29,7 @@ function BasicForm() {
         valueChangeHandler: emailChangedHandler,
         inputBlurHandler: emailBlurHandler,
         reset: resetEmailInput
-    } = useInput(value => value.includes('@'));
+    } = useInput(isEmail);
 
     let formIsValid = false;
 
@@ -37,13 +40,12 @@ function BasicForm() {
     function formSubmissionHandler(event) {
         event.preventDefault();
 
-        if (!enteredFirstNameIsValid && !enteredLastNameIsValid && enteredEmailIsValid) {
+        if (!formIsValid) {
             return;
         }
 
-        console.log(enteredFirstName);
-        console.log(enteredLastName);
-        console.log(enteredEmail);
+        console.log('Submitted');
+        console.log(enteredFirstName, enteredLastName, enteredEmail);
 
         resetFirstNameInput();
         resetLastNameInput();
@@ -56,7 +58,7 @@ function BasicForm() {
 
     return (
         <form onSubmit={formSubmissionHandler}>
-            <div>
+            <div className='control-group'>
                 <div className={firstNameInputClasses}>
                     <label htmlFor='firstName'>First Name</label>
                     <input
@@ -66,7 +68,7 @@ function BasicForm() {
                         onBlur={firstNameBlurHandler}
                         value={enteredFirstName}
                     />
-                    {firstNameInputHasError && (<p className='error-text'>First name must not be empty.</p>)}
+                    {firstNameInputHasError && (<p className='error-text'>Please enter a first name.</p>)}
                 </div>
                 <div className={lastNameInputClasses}>
                     <label htmlFor='lastName'>Last Name</label>
@@ -77,7 +79,7 @@ function BasicForm() {
                         onBlur={lastNameBlurHandler}
                         value={enteredLastName}
                     />
-                    {lastNameInputHasError && (<p className='error-text'>Last name must not be empty.</p>)}
+                    {lastNameInputHasError && (<p className='error-text'>Please enter a last name.</p>)}
                 </div>
             </div>
             <div className={emailInputClasses}>
@@ -89,7 +91,7 @@ function BasicForm() {
                     onBlur={emailBlurHandler}
                     value={enteredEmail}
                 />
-                {emailInputHasError && (<p className='error-text'>Email must not be empty.</p>)}
+                {emailInputHasError && (<p className='error-text'>Please enter a valid email address.</p>)}
             </div>
             <div className='form-actions'>
                 <button disabled={!formIsValid}>Submit</button>
